@@ -1,0 +1,16 @@
+{
+    "id": "2c2c6815-8125-40c6-9332-add2a95ca960",
+    "version": "0.0.1",
+    "requiredApiVersion": "^1.19.0",
+    "iconFile": "icon.png",
+    "author": {
+        "name": "IllTamer",
+        "homepage": "https://github.com/IllTamer",
+        "support": "https://github.com/IUnlimit/rocketchat-app-rss"
+    },
+    "name": "RSS",
+    "nameSlug": "rss",
+    "classFile": "RssApp.ts",
+    "description": "App for RSS feed",
+    "implements": []
+}
