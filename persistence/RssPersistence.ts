@@ -1,68 +1,58 @@
-import { IHttp, IModify, IPersistence, IPersistenceRead, IRead } from '@rocket.chat/apps-engine/definition/accessors';
+import { IPersistence, IPersistenceRead } from '@rocket.chat/apps-engine/definition/accessors';
 import { RocketChatAssociationModel, RocketChatAssociationRecord } from '@rocket.chat/apps-engine/definition/metadata';
 import { IRoom } from '@rocket.chat/apps-engine/definition/rooms';
+import { Rss } from '../model/rss';
 
-export class RSSPersistence {
+export class RssPersistence {
     // add records
-    public static async persist(persis: IPersistence, room: IRoom, id: string): Promise<boolean> {
+    // @return id
+    public static async persist(persis: IPersistence, room: IRoom, rss: Rss): Promise<string> {
         const associations: Array<RocketChatAssociationRecord> = [
             new RocketChatAssociationRecord(RocketChatAssociationModel.MISC, 'rss'), 
             new RocketChatAssociationRecord(RocketChatAssociationModel.ROOM, room.id),
-            new RocketChatAssociationRecord(RocketChatAssociationModel.MISC, id),
+            new RocketChatAssociationRecord(RocketChatAssociationModel.MISC, rss.url),
         ];
 
         try {
-            await persis.updateByAssociations(associations, { id }, true);
+            return await persis.updateByAssociations(associations, rss, true);
         } catch (err) {
-            console.warn(err);
-            return false;
+            console.error(err);
         }
-
-        return true;
+        return "";
     }
 
-    // query all records within the "scope" - message
-    public static async findAll(persis: IPersistenceRead): Promise<Array<string>> {
+    // query all records within the "scope" - rss
+    public static async findAll(persis: IPersistenceRead): Promise<Array<Rss>> {
         const associations: Array<RocketChatAssociationRecord> = [
             new RocketChatAssociationRecord(RocketChatAssociationModel.MISC, 'rss'),
         ];
 
-        let result: Array<string> = [];
+        let result: Array<Rss> = [];
         try {
-            const records: Array<{ id: string }> = (await persis.readByAssociations(associations)) as Array<{ id: string }>;
-
-            if (records.length) {
-                result = records.map(({ id }) => id);
-            }
+            result = (await persis.readByAssociations(associations)) as Array<Rss>;
         } catch (err) {
-            console.warn(err);
+            console.error(err);
         }
-
         return result;
     }
 
-    // query all records by room within the "scope" - message
-    public static async findByRoom(persis: IPersistenceRead, room: IRoom): Promise<Array<string>> {
+    // query all records by room within the "scope" - rss
+    public static async findByRoom(persis: IPersistenceRead, room: IRoom): Promise<Array<Rss>> {
         const associations: Array<RocketChatAssociationRecord> = [
             new RocketChatAssociationRecord(RocketChatAssociationModel.MISC, 'rss'),
             new RocketChatAssociationRecord(RocketChatAssociationModel.ROOM, room.id),
         ];
 
-        let result: Array<string> = [];
+        let result: Array<Rss> = [];
         try {
-            const records: Array<{ id: string }> = (await persis.readByAssociations(associations)) as Array<{ id: string }>;
-
-            if (records.length) {
-                result = records.map(({ id }) => id);
-            }
+            result = (await persis.readByAssociations(associations)) as Array<Rss>;
         } catch (err) {
-            console.warn(err);
+            console.error(err);
         }
-
         return result;
     }
 
-    // remove all records by room within the "scope" - message
+    // remove all records by room within the "scope" - rss
     public static async removeByRoom(persis: IPersistence, room: IRoom): Promise<boolean> {
         const associations: Array<RocketChatAssociationRecord> = [
             new RocketChatAssociationRecord(RocketChatAssociationModel.MISC, 'rss'),
@@ -72,32 +62,31 @@ export class RSSPersistence {
         try {
             await persis.removeByAssociations(associations);
         } catch (err) {
-            console.warn(err);
+            console.error(err);
             return false;
         }
-
         return true;
     }
 
-    // remove all records by id within the "scope" - message
-    public static async removeById(persis: IPersistence, id: string): Promise<boolean> {
+    // remove all records by id within the "scope" - rss
+    public static async removeById(persis: IPersistence, room: IRoom, id: string): Promise<boolean> {
         const associations: Array<RocketChatAssociationRecord> = [
             new RocketChatAssociationRecord(RocketChatAssociationModel.MISC, 'rss'),
+            new RocketChatAssociationRecord(RocketChatAssociationModel.ROOM, room.id),
             new RocketChatAssociationRecord(RocketChatAssociationModel.MISC, id),
         ];
 
         try {
             await persis.removeByAssociations(associations);
         } catch (err) {
-            console.warn(err);
+            console.error(err);
             return false;
         }
-
         return true;
     }
 
-    // remove all records within the "scope" - message
-    public static async clear(persis): Promise<boolean> {
+    // remove all records within the "scope" - rss
+    public static async clear(persis: IPersistence): Promise<boolean> {
         const associations: Array<RocketChatAssociationRecord> = [
             new RocketChatAssociationRecord(RocketChatAssociationModel.MISC, 'rss'),
         ];
@@ -105,10 +94,9 @@ export class RSSPersistence {
         try {
             await persis.removeByAssociations(associations);
         } catch (err) {
-            console.warn(err);
+            console.error(err);
             return false;
         }
-
         return true;
     }
 }

@@ -13,10 +13,16 @@ export class Page {
     constructor(pageInfo: Array<Element>) {
         this.title = pageInfo[0].elements![0].text as string
         this.link = pageInfo[1].elements![0].text as string
-        this.description = pageInfo[2].elements![0].text as string
+        this.description = (pageInfo[2].elements![0].text as string).substring(0, 80)
+        this.iteams = []
 
-        for (var i = 3; i < pageInfo.length; ++ i) {
-            this.iteams.push(new Item(pageInfo[i].elements! as Array<Element>));
+        // revserse to show items desc
+        const reverseInfos = pageInfo.slice(3).reverse()
+        let subCount = 3;
+        for (const info of reverseInfos) {
+            if (subCount-- == 0) break;
+            const item = new Item(info.elements! as Array<Element>);
+            this.iteams.push(item);
         }
     }
 
@@ -38,7 +44,7 @@ export class Item {
     constructor(itemElems: Array<Element>) {
         this.title = itemElems[0].elements![0].cdata as string
         this.link = itemElems[1].elements![0].text as string
-        this.description = (itemElems[2].elements![0].cdata as string).substring(0, 100)
+        this.description = (itemElems[2].elements![0].cdata as string).substring(0, 200)
         this.guid = itemElems[3].elements![0].text as string
         this.pubDate = new Date(itemElems[4].elements![0].text as string).getTime();
     }

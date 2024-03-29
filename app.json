@@ -1,6 +1,6 @@
 {
     "id": "2c2c6815-8125-40c6-9332-add2a95ca960",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "requiredApiVersion": "^1.19.0",
     "iconFile": "icon.png",
     "author": {
@@ -8,9 +8,38 @@
         "homepage": "https://github.com/IllTamer",
         "support": "https://github.com/IUnlimit/rocketchat-app-rss"
     },
-    "name": "RSS",
+    "name": "Rss",
     "nameSlug": "rss",
     "classFile": "RssApp.ts",
-    "description": "App for RSS feed",
-    "implements": []
+    "description": "An app for RSS feed",
+    "implements": [],
+    "permissions": [
+        {
+            "name": "user.read"
+        },
+        {
+            "name": "room.read"
+        },
+        {
+            "name": "message.read"
+        },
+        {
+            "name": "message.write"
+        },
+        {
+            "name": "scheduler"
+        },
+        {
+            "name": "networking"
+        },
+        {
+            "name": "persistence"
+        },
+        {
+            "name": "slashcommand"
+        },
+        {
+            "name": "persistence"
+        }
+    ]
 }
