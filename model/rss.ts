@@ -1,6 +1,8 @@
 import { Item, Page } from "./page";
 
 export class Rss {
+    // rss sub room id
+    public roomId: string;
     // rss url
     public url: string;
     // IllTamer's Blog
@@ -14,7 +16,8 @@ export class Rss {
     // items list
     public iteams: Array<Item>;
 
-    constructor(url: string, page: Page) {
+    constructor(roomId: string, url: string, page: Page) {
+        this.roomId = roomId;
         this.url = url;
         this.title = page.title;
         this.homeLink = page.link;

@@ -11,7 +11,7 @@ import {
 } from '@rocket.chat/apps-engine/definition/slashcommands';
 import { type RssApp } from "../RssApp";
 import { sendNotification, sendMessage } from '../lib/message';
-import { parseAndPersistRss } from '../lib/parser';
+import { noticeParseAndPersistRss } from '../lib/parser';
 import { formatDate } from '../lib/date';
 import { IRoom } from '@rocket.chat/apps-engine/definition/rooms';
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
@@ -74,7 +74,7 @@ export class RssCommand implements ISlashCommand {
         if (!arg1) {
             return await sendNotification(modify, room, sender, "Please input the rss URL !");
         }
-        const rss = await parseAndPersistRss(modify, room, sender, persis, http, arg1);
+        const rss = await noticeParseAndPersistRss(modify, room, sender, persis, http, arg1);
         if (!rss) {
             throw new Error(`Failed to parse rss link: ${arg1}`);
         }

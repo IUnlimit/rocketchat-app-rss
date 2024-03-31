@@ -41,3 +41,23 @@ export async function sendNotification(
         .getNotifier()
         .notifyUser(user, msg.getMessage());
 }
+
+// App send block message for tip
+export async function sendRoomNotification(
+    modify: IModify,
+    room: IRoom,
+    message: string
+): Promise<void> {
+    const msg = modify.getCreator().startMessage()
+        .setRoom(room);
+
+    const block = modify.getCreator().getBlockBuilder();
+    block.addSectionBlock({
+        text: block.newMarkdownTextObject(message),
+    });
+    msg.setBlocks(block);
+
+    return await modify
+        .getNotifier()
+        .notifyRoom(room, msg.getMessage());
+}
