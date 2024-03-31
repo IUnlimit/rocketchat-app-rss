@@ -1,4 +1,5 @@
 import { Element } from 'xml-js';
+// import { toElementMap } from '../lib/parser';
 
 export class Page {
     // IllTamer's Blog
@@ -6,17 +7,30 @@ export class Page {
     // http://localhost:8090/
     public link: string;
     // IllTamer's Blog
-    public description: string;
+    public description: string = "";
     // items list
     public iteams: Array<Item>
 
     constructor(pageInfo: Array<Element>) {
-        this.title = pageInfo[0].elements![0].text as string
-        this.link = pageInfo[1].elements![0].text as string
-        this.description = (pageInfo[2].elements![0].text as string).substring(0, 80)
+        const elemMap = new Map();
+        elemMap.set("item", new Array<Element>());
+        for (const elem of pageInfo) {
+            if (elem.name == "item") {
+                (elemMap.get("item") as Array<Element>).push(elem);
+                continue;
+            }
+            elemMap.set(elem.name, elem);
+        }
+        
+        this.title = elemMap.get("title")?.elements![0].text as string;
+        this.link = elemMap.get("link")?.elements![0].text as string;
+        const desElems = elemMap.get("description")?.elements;
+        if (desElems != null) {
+            this.description = (desElems[0].text as string).substring(0, 80)
+        }
         this.iteams = []
 
-        const reverseInfos = pageInfo.slice(3).reverse()
+        const reverseInfos = elemMap.get("item")! as Array<Element>
         for (const info of reverseInfos) {
             const item = new Item(info.elements! as Array<Element>);
             this.iteams.push(item);
@@ -40,10 +54,21 @@ export class Item {
     public pubDate: number;
 
     constructor(itemElems: Array<Element>) {
-        this.title = itemElems[0].elements![0].cdata as string
-        this.link = itemElems[1].elements![0].text as string
-        this.description = (itemElems[2].elements![0].cdata as string)
-        this.guid = itemElems[3].elements![0].text as string
-        this.pubDate = new Date(itemElems[4].elements![0].text as string).getTime();
+        // const elemMap = toElementMap(itemElems);
+        const elemMap = new Map();
+        elemMap.set("item", new Array<Element>());
+        for (const elem of itemElems) {
+            if (elem.name == "item") {
+                (elemMap.get("item") as Array<Element>).push(elem);
+                continue;
+            }
+            elemMap.set(elem.name, elem);
+        }
+
+        this.title = elemMap.get("title")?.elements![0].cdata as string
+        this.link = elemMap.get("link")?.elements![0].text as string
+        this.description = (elemMap.get("description")?.elements![0].cdata as string)
+        this.guid = elemMap.get("guid")?.elements![0].text as string
+        this.pubDate = Date.parse(elemMap.get("pubDate")?.elements![0].text as string);
     }
 }

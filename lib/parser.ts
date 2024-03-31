@@ -40,16 +40,38 @@ export async function parseRss(
     if (resp.statusCode != 200) {
         throw new Error(`URL: ${url} are unavailable (status ${resp.statusCode})`);
     }
-    
+
     const elem = xml2js(resp.content!);
     const parent = elem.elements[0] as Element;
     if (parent.name != "rss") {
         throw new Error(`Unknow xml type: ${parent.name}`);
     }
-    
+
     const son = parent.elements![0] as Element;
     const rssInfo = son.elements! as Array<Element>;
     const page = new Page(rssInfo);
     const rss = new Rss(roomId, url, page);
     return await Promise.resolve(rss);
 }
+
+// parse pageInfo to elementMap
+/*
+{
+    "title": obj,
+    "link": obj,
+    "description": obj,
+    "item": [obj, obj, ...]
+}
+*/
+// export function toElementMap(pageInfo: Array<Element>): Map<string, Element> {
+//     const elemMap = new Map();
+//     elemMap.set("item", new Array<Element>());
+//     for (const elem of pageInfo) {
+//         if (elem.name == "item") {
+//             (elemMap.get("item") as Array<Element>).push(elem);
+//             continue;
+//         }
+//         elemMap.set(elem.name, elem);
+//     }
+//     return new Map();
+// }
