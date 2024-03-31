@@ -1,6 +1,13 @@
 # RSS
 An app for RSS feed
 
+## Usage
+
+```shell
+# Use this command to show help
+/rss h
+```
+
 ## Getting Started
 Now that you have generated a blank default Rocket.Chat App, what are you supposed to do next?
 Start developing! Open up your favorite editor, our recommended one is Visual Studio code,
