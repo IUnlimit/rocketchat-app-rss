@@ -4,7 +4,7 @@ import { Element } from 'xml-js';
 export class Page {
     // IllTamer's Blog
     public title: string;
-    // http://localhost:8090/
+    // https://www.illtamer.com
     public link: string;
     // IllTamer's Blog
     public description: string = "";
@@ -44,7 +44,7 @@ export class Page {
 export class Item {
     // 超详细 Windows 安装 Docker Desktop 全过程
     public title: string;
-    // http://localhost:8090/2022/08/11/windows-install-docker-desktop
+    // http://www.illtamer.com/2022/08/11/windows-install-docker-desktop
     public link: string;
     // <h2 id=\"前言\">前言</h2>\n<p>
     public description: string;
@@ -65,10 +65,22 @@ export class Item {
             elemMap.set(elem.name, elem);
         }
 
-        this.title = elemMap.get("title")?.elements![0].cdata as string
+        this.title = getOneElementsData(elemMap.get("title")?.elements)
         this.link = elemMap.get("link")?.elements![0].text as string
         this.description = (elemMap.get("description")?.elements![0].cdata as string)
         this.guid = elemMap.get("guid")?.elements![0].text as string
         this.pubDate = Date.parse(elemMap.get("pubDate")?.elements![0].text as string);
     }
+}
+
+// [ { type: 'cdata', cdata: 'The Dataflow Model' } ] -> elem.cdata
+// [ { type: 'test', test: 'The Dataflow Model' } ] -> elem.test
+function getOneElementsData(elemList?: Array<Element>): string {
+    if (elemList?.length == 0) {
+        return "";
+    } else if (elemList!.length != 1) {
+        throw new Error(`One element array out of range: ${elemList}`);
+    }
+    const elem = elemList![0];
+    return elem[elem.type!];
 }
